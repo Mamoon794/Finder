@@ -1,10 +1,10 @@
-from PyQt6 import QtGui
+from PyQt6 import QtGui, QtCore
 from PyQt6.QtWidgets import *
+from objects import *
 import sys
 import time
 import os
 from os import error, path, stat
-from datetime import datetime
 
 class ShowFileInfo(QWidget):
     def __init__(self):
@@ -66,28 +66,28 @@ class MyWindow(QMainWindow):
         font = QtGui.QFont()
         font.setPointSize(12)
         self.keepGoing = True
-        self.enterLabel = myLabel(self, "Enter Keyword or name:", font, 20, 10, 181, 31)
-        self.enterLabel.alignCenter()
+        self.enterLabel = MyLabel(self, "Enter Keyword or name:", font, 20, 10, 181, 31)
+        self.enterLabel.setAlignment(QtCore.Qt.AlignCenter)
         
         self.enterName = QTextEdit(self)
         self.enterName.setGeometry(220, 10, 341, 31)
 
-        self.dirLabel = myLabel(self, "Enter Directory:", font, 20, 60, 181, 31)
+        self.dirLabel = MyLabel(self, "Enter Directory:", font, 20, 60, 181, 31)
         self.dirValue =QTextEdit(self)
         self.dirValue.setGeometry(220, 60, 341, 31)
 
-        self.progressLabel = myLabel(self, "Progess:", font, 20, 285, 71, 31)
+        self.progressLabel = MyLabel(self, "Progess:", font, 20, 285, 71, 31)
 
-        self.resultsLabel = myLabel(self, "Results Found:", font, 350, 290, 121, 31)
-        self.amountThrough = myLabel(self, "Amount Scanned:", font, 350, 330, 121, 31)
-        self.searchStatusLabel = myLabel(self, "Search Status", font, 80, 240, 401, 31)
+        self.resultsLabel = MyLabel(self, "Results Found:", font, 350, 290, 121, 31)
+        self.amountThrough = MyLabel(self, "Amount Scanned:", font, 350, 330, 121, 31)
+        self.searchStatusLabel = MyLabel(self, "Search Status", font, 80, 240, 401, 31)
         self.searchStatusLabel.alignCenter()
-        self.timeLapsedNum = myLabel(self, "0", font, 140, 360, 201, 31)
+        self.timeLapsedNum = MyLabel(self, "0", font, 140, 360, 201, 31)
 
-        self.timeLapsedLabel = myLabel(self, "Time Lapsed:", font, 20, 360, 101, 31)
+        self.timeLapsedLabel = MyLabel(self, "Time Lapsed:", font, 20, 360, 101, 31)
         font.setPointSize(10)
-        self.resultsValue = myLabel(self, "0", font, 480, 290, 101, 31)
-        self.scannedValue = myLabel(self, "0", font, 480, 330, 101, 31)
+        self.resultsValue = MyLabel(self, "0", font, 480, 290, 101, 31)
+        self.scannedValue = MyLabel(self, "0", font, 480, 330, 101, 31)
 
         font.setPointSize(11)
 
@@ -105,11 +105,11 @@ class MyWindow(QMainWindow):
         self.notShow.setText("Not show")
         self.notShow.setGeometry(480, 110, 70, 17)
 
-        self.search = myButton(self, "Search", 480, 160, 81, 31)
+        self.search = MyButton(self, "Search", 480, 160, 81, 31)
         self.enterName.setText("report")
         self.dirValue.setText("C:\\Users\\noure\\Documents")
         self.search.clicked.connect(self.getInfo)
-        self.cancel = myButton(self, "Cancel", 480, 400, 81, 31)
+        self.cancel = MyButton(self, "Cancel", 480, 400, 81, 31)
         self.cancel.clicked.connect(self.cancelOp)
 
         self.showProgress = progressBar(self, 100, 0, 150, 290, 118, 23)
