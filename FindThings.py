@@ -106,8 +106,8 @@ class MyWindow(QMainWindow):
         self.notShow.setGeometry(480, 110, 70, 17)
 
         self.search = MyButton(self, "Search", 480, 160, 81, 31)
-        self.enterName.setText("report")
-        self.dirValue.setText("C:\\Users\\noure\\Documents")
+        self.enterName.setText("get_word")
+        self.dirValue.setText("/Users/primus/PycharmProjects/pyProjects")
         self.search.clicked.connect(self.getInfo)
         self.cancel = MyButton(self, "Cancel", 480, 400, 81, 31)
         self.cancel.clicked.connect(self.cancelOp)
@@ -168,7 +168,7 @@ class MyWindow(QMainWindow):
         self.amount = 0
 
         for dir in os.listdir(self.directory):
-            a = self.directory + "\\" + dir
+            a = self.directory + "/" + dir
             if os.path.isdir(a) and not self.is_junction(a):
                 try:
                     os.listdir(a)
@@ -180,7 +180,7 @@ class MyWindow(QMainWindow):
         self.amount = len(self.folderDir)+1
 
         self.showProgress.setMaximum(self.amount)
-        self.resultsValue.setText(self.results)
+        self.resultsValue.setText(str(self.results))
         self.showProgress.setValue(0)
         app.processEvents()
         self.amount = 0
@@ -231,16 +231,16 @@ class MyWindow(QMainWindow):
             
                 
                 for di in self.folderDir:
-                    if self.directory[-1] == "\\":
+                    if self.directory[-1] == "/":
                         if path_2 == (self.directory + di):
                             self.amount += 1
                     else:
-                        if path_2 == (self.directory +  "\\" + di):
+                        if path_2 == (self.directory +  "/" + di):
                             self.amount += 1
                     
-                self.timeLapsedNum.changeText(round(time.time() - time1, 2))
-                self.resultsValue.changeText(self.results)
-                self.scannedValue.changeText(self.scanned)
+                self.timeLapsedNum.setText(str(round(time.time() - time1, 2)))
+                self.resultsValue.setText(str(self.results))
+                self.scannedValue.setText(str(self.scanned))
                 self.showProgress.setValue(self.amount)
                 app.processEvents()
         except Exception as e:
@@ -270,9 +270,9 @@ class MyWindow(QMainWindow):
             info1.append("Files: {}\n".format(files))
             info1.append("Folders: {}\n".format(folders))
 
-            for p, fol, fil in os.walk(thePath +"\\"+ cFolder):
+            for p, fol, fil in os.walk(thePath +"/"+ cFolder):
                 for fileSize in fil:
-                    realSize += path.getsize(p+"\\"+fileSize)
+                    realSize += path.getsize(p+"/"+fileSize)
 
             info1.append("Size: {}KB\n\n".format(realSize/1000))
 
@@ -289,7 +289,7 @@ class MyWindow(QMainWindow):
             writing.write("filename: {}\n".format(cFile))
             writing.write("Files: {}\n".format(files))
             writing.write("Folders: {}\n".format(folders))
-            writing.write("Size: {}KB\n\n".format(path.getsize(thePath +"\\"+ cFile)/1000))
+            writing.write("Size: {}KB\n\n".format(path.getsize(thePath +"/"+ cFile)/1000))
         except Exception as e:
             print("Write Files: " + str(e))
         self.fileNum += 1
@@ -305,9 +305,9 @@ class MyWindow(QMainWindow):
             writing.write("Files: {}\n".format(files))
             writing.write("Folders: {}\n".format(folders))
 
-            for p, fol, fil in os.walk(thePath +"\\"+ cFolder):
+            for p, fol, fil in os.walk(thePath +"/"+ cFolder):
                 for fileSize in fil:
-                    realSize += path.getsize(p+"\\"+fileSize)
+                    realSize += path.getsize(p+"/"+fileSize)
 
             writing.write("Size: {}KB\n\n".format(realSize/1000))
 
@@ -325,7 +325,7 @@ class MyWindow(QMainWindow):
             info1.append("filename: {}".format(cFile))
             info1.append("Files: {}".format(files))
             info1.append("Folders: {}".format(folders))
-            info1.append("Size: {}KB\n\n".format(path.getsize(thePath +"\\"+ cFile)/1000))
+            info1.append("Size: {}KB\n\n".format(path.getsize(thePath +"/"+ cFile)/1000))
 
             self.infoShow.addResults(info1)
         except:
