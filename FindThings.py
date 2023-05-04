@@ -8,7 +8,7 @@ from os import error, path, stat
 
 class ShowFileInfo(QWidget):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         self.resize(450, 550)
         self.formLayout = QFormLayout(self)
         groupbox = QGroupBox("Results")
@@ -60,14 +60,14 @@ class ShowFileInfo(QWidget):
     
 class MyWindow(QMainWindow):
     def __init__(self):
-        super(MyWindow, self).__init__(self)
+        super().__init__()
         self.resize(585, 199)
         
         font = QtGui.QFont()
         font.setPointSize(12)
         self.keepGoing = True
         self.enterLabel = MyLabel(self, "Enter Keyword or name:", font, 20, 10, 181, 31)
-        self.enterLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.enterLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         
         self.enterName = QTextEdit(self)
         self.enterName.setGeometry(220, 10, 341, 31)
@@ -81,7 +81,7 @@ class MyWindow(QMainWindow):
         self.resultsLabel = MyLabel(self, "Results Found:", font, 350, 290, 121, 31)
         self.amountThrough = MyLabel(self, "Amount Scanned:", font, 350, 330, 121, 31)
         self.searchStatusLabel = MyLabel(self, "Search Status", font, 80, 240, 401, 31)
-        self.searchStatusLabel.alignCenter()
+        self.searchStatusLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.timeLapsedNum = MyLabel(self, "0", font, 140, 360, 201, 31)
 
         self.timeLapsedLabel = MyLabel(self, "Time Lapsed:", font, 20, 360, 101, 31)
@@ -112,7 +112,7 @@ class MyWindow(QMainWindow):
         self.cancel = MyButton(self, "Cancel", 480, 400, 81, 31)
         self.cancel.clicked.connect(self.cancelOp)
 
-        self.showProgress = progressBar(self, 100, 0, 150, 290, 118, 23)
+        self.showProgress = ProgressBar(self, 100, 0, 150, 290, 118, 23)
         self.infoShow = ShowFileInfo()
 
     def getInfo(self):
@@ -180,7 +180,7 @@ class MyWindow(QMainWindow):
         self.amount = len(self.folderDir)+1
 
         self.showProgress.setMaximum(self.amount)
-        self.resultsValue.changeText(self.results)
+        self.resultsValue.setText(self.results)
         self.showProgress.setValue(0)
         app.processEvents()
         self.amount = 0
@@ -338,4 +338,4 @@ class MyWindow(QMainWindow):
 app = QApplication(sys.argv)
 win = MyWindow()
 win.show()
-sys.exit(app.exit())
+sys.exit(app.exec())

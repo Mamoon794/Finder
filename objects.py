@@ -16,3 +16,11 @@ class MyButton(QPushButton):
         self.setText(name)
         self.setGeometry(setX, setY, width, height)
         self.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+
+
+class ProgressBar(QProgressBar):
+    def __init__(self, window, maximum, current, setX, setY, width, height):
+        super().__init__(window)
+        self.setMaximum(maximum)
+        self.setValue(current)
+        self.setGeometry(setX, setY, width, height)
