@@ -4,6 +4,7 @@ import sys
 
 # path  = "/Users/primus/Documents"
 count = 0
+ass = 0
 
 def signal_handler(signal, frame):
     # print(path)
@@ -46,7 +47,10 @@ class LinkedList:
 w = open("output.txt", 'w')
 w.close()
 
-def list_find(thePath, theCount, shouldFork=False):
+def list_find(thePath, c, shouldFork=False):
+
+    global ass
+    theCount = c
     amount = 0
     lst = LinkedList()
     node1 = Node(thePath)
@@ -84,14 +88,13 @@ def list_find(thePath, theCount, shouldFork=False):
                             exit(0)
 
 
-                    elif amount >= 4:
-                        childPid, _ = os.waitpid(-1, os.WNOHANG)
-                        if childPid != 0:
-
-
-                            amount -= 1
-
-                    if amount >= 4 or not shouldFork:
+                    else:
+                        try:
+                            childPid, _ = os.waitpid(-1, os.WNOHANG)
+                            if childPid != 0:
+                                amount -= 1
+                        except ChildProcessError:
+                            pass
                         node1 = Node(entry.path)
                         lst.add(node1)
 
@@ -119,6 +122,6 @@ def list_find(thePath, theCount, shouldFork=False):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-c = list_find('/Users/primus/Documents', count, True)
+c = list_find('/Users/primus', count, True)
 #
 print(c)
