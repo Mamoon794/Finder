@@ -1,11 +1,17 @@
 from PyQt6 import QtGui, QtCore
-from PyQt6.QtWidgets import *
-from objects import *
+from Objects import *
 import sys
 import time
 import os
-from os import error, path, stat
+from os import error, path
 
+
+"""
+This program is made to search the folders and files in the path given by the user and find every file or folder or both
+containing the keyword given by the user. This sometimes is faster than the windows search bar.
+
+
+"""
 class ShowFileInfo(QWidget):
     def __init__(self):
         super().__init__()
