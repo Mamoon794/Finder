@@ -43,3 +43,33 @@ class LinkedList:
         return node.value
 
 
+
+def list_find():
+    global path
+    global count
+    lst = LinkedList()
+    node1 = Node(path)
+    lst.add(node1)
+    prev = ""
+    while lst.head and lst.tail:
+        try:
+            path = lst.poping()
+            if prev == path:
+
+                print(path)
+            else:
+                prev = path
+
+            for entry in os.scandir(path):
+                if entry.is_file():
+                    count += 1
+
+
+                if entry.is_dir() and not os.path.islink(entry.path):
+                    node1 = Node(entry.path)
+                    lst.add(node1)
+
+
+        except PermissionError:
+            pass
+    return count
