@@ -2,7 +2,7 @@ import os
 import signal
 import sys
 
-path  = "/Users"
+path  = "/Users/primus"
 count = 0
 
 def signal_handler(signal, frame):
@@ -45,10 +45,10 @@ class LinkedList:
 
 
 
-def list_find(thePath, shouldFork=False):
+def list_find(thePath, theCount, shouldFork=False):
     amount = 0
     lst = LinkedList()
-    node1 = Node(path)
+    node1 = Node(thePath)
     lst.add(node1)
     prev = ""
     while lst.head and lst.tail:
@@ -62,7 +62,7 @@ def list_find(thePath, shouldFork=False):
 
             for entry in os.scandir(path):
                 if entry.is_file():
-                    count += 1
+                    theCount += 1
 
 
                 if entry.is_dir() and not os.path.islink(entry.path):
@@ -71,15 +71,18 @@ def list_find(thePath, shouldFork=False):
                         amount += 1
 
                         if pid == 0:
-                            files = list_find(False)
+                            files = list_find(entry.path, 0, False)
                             sys.exit(files)
 
-                    elif amount >= 4:
-                        _, status = os.wait()
-                        print(status)
 
-                    node1 = Node(entry.path)
-                    lst.add(node1)
+                    elif amount >= 4:
+                        childPid, _ = os.waitpid(-1, os.WNOHANG)
+                        if childPid != 0:
+                            amount -= 1
+
+                    if amount >= 4 or not shouldFork:
+                        node1 = Node(entry.path)
+                        lst.add(node1)
 
 
         except PermissionError:
@@ -89,6 +92,6 @@ def list_find(thePath, shouldFork=False):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-list_find(True)
+list_find(path, count, True)
 #
 print(count)
