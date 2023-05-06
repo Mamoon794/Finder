@@ -1,5 +1,6 @@
 import os
 import signal
+import sys
 
 path  = "/Users"
 count = 0
@@ -44,9 +45,8 @@ class LinkedList:
 
 
 
-def list_find():
-    global path
-    global count
+def list_find(thePath, shouldFork=False):
+    amount = 0
     lst = LinkedList()
     node1 = Node(path)
     lst.add(node1)
@@ -66,6 +66,18 @@ def list_find():
 
 
                 if entry.is_dir() and not os.path.islink(entry.path):
+                    if amount < 4 and shouldFork:
+                        pid = os.fork()
+                        amount += 1
+
+                        if pid == 0:
+                            files = list_find(False)
+                            sys.exit(files)
+
+                    elif amount >= 4:
+                        _, status = os.wait()
+                        print(status)
+
                     node1 = Node(entry.path)
                     lst.add(node1)
 
@@ -73,3 +85,10 @@ def list_find():
         except PermissionError:
             pass
     return count
+
+
+
+signal.signal(signal.SIGINT, signal_handler)
+list_find(True)
+#
+print(count)
