@@ -72,12 +72,21 @@ def list_find(thePath, theCount, shouldFork=False):
 
                         if pid == 0:
                             files = list_find(entry.path, 0, False)
-                            sys.exit(files)
+                            w = open("output.txt", 'a')
+                            w.write(str(files))
+                            w.write("\n")
+                            w.close()
+                            exit(0)
 
 
                     elif amount >= 4:
                         childPid, _ = os.waitpid(-1, os.WNOHANG)
                         if childPid != 0:
+                            r = open("output.txt", "r")
+                            message = r.readline()
+                            r.close()
+                            theCount += message
+
                             amount -= 1
 
                     if amount >= 4 or not shouldFork:
@@ -87,7 +96,8 @@ def list_find(thePath, theCount, shouldFork=False):
 
         except PermissionError:
             pass
-    return count
+
+    return theCount
 
 
 
