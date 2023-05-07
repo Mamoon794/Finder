@@ -1,6 +1,7 @@
 import os
 import signal
 import sys
+import time
 
 # path  = "/Users/primus/Documents"
 count = 0
@@ -22,6 +23,7 @@ class LinkedList:
     def __init__(self):
         self.head = None
         self.tail = None
+        self.size = 0
 
     def is_empty(self):
         return self.head is None
@@ -33,8 +35,10 @@ class LinkedList:
             self.tail.next = node
             node.prev = self.tail
         self.tail = node
+        self.size += 1
 
     def poping(self):
+        self.size -= 1
         node = self.tail
         if self.tail == self.head:
             self.head = None
@@ -44,12 +48,35 @@ class LinkedList:
             self.tail.next = None
         return node.value
 
-w = open("output.txt", 'w')
-w.close()
 
-ws = open("result.txt", "w")
 
-def list_find(thePath, c, shouldFork=False):
+
+def list_find2(thePath, theCount, writing):
+    try:
+        obj = os.scandir(thePath)
+        for entry in obj:
+            if entry.is_file() and not entry.is_symlink():
+                theCount += 1
+
+            if entry.is_dir() and not os.path.islink(entry.path):
+
+                writing.write(entry.path)
+
+
+    except PermissionError:
+        pass
+    return theCount
+
+
+def readMessage(codes):
+    os.close(codes[0])
+    r = os.fdopen(codes[1])
+    message = r.read()
+    r.close()
+    return int(message)
+
+
+def list_find(thePath, c):
 
     theCount = c
     amount = 0
@@ -57,48 +84,53 @@ def list_find(thePath, c, shouldFork=False):
     node1 = Node(thePath)
     lst.add(node1)
     prev = ""
+
+    pipeCodes = dict()
     while lst.head and lst.tail:
         try:
             paths = lst.poping()
             if prev == paths:
 
-                # print(path)
-                pass
+                print(paths)
             else:
                 prev = paths
 
             obj = os.scandir(paths)
             for entry in obj:
-                if entry.is_file():
-                    if "/Users/primus/.DS_Store" in  str(entry.path):
-                        print("here")
-                    ws.write(entry.path)
-                    ws.write("\n")
+                if entry.is_file() and not entry.is_symlink():
                     theCount += 1
 
 
                 elif entry.is_dir() and not os.path.islink(entry.path):
-                    if amount < 4 and shouldFork:
+                    if amount < 40:
                         amount += 1
+                        rea, wri = os.pipe()
                         pid = os.fork()
 
 
                         if pid == 0:
                             lst = None
                             obj.close()
-                            files = list_find(entry.path, 0, False)
-                            w = open("output.txt", 'a')
-                            w.write(str(files))
-                            w.write("\n")
-                            w.close()
-                            exit(0)
+                            wri = os.fdopen(wri, 'w')
+                            files = list_find2(entry.path, 0, wri)
+                            wri.write("now for the amount:")
+                            wri.write(str(files))
+                            wri.close()
+                            os.kill(os.getpid(), signal.SIGKILL)
+
+                        else:
+                            pipeCodes[pid] = [wri, rea]
 
 
                     else:
                         try:
                             childPid, _ = os.waitpid(-1, os.WNOHANG)
-                            if childPid != 0:
+                            while childPid > 0:
+                                theCount += readMessage(pipeCodes[childPid])
+
                                 amount -= 1
+                                pipeCodes.pop(childPid)
+                                childPid, _ = os.waitpid(-1, os.WNOHANG)
                         except ChildProcessError:
                             pass
                         node1 = Node(entry.path)
@@ -108,27 +140,26 @@ def list_find(thePath, c, shouldFork=False):
         except PermissionError as e:
             pass
 
-    if shouldFork:
-        pid = 2
         try:
+            pid, status = os.wait()
             while pid > 0:
+                theCount += readMessage(pipeCodes[pid])
+
+                amount -= 1
+                pipeCodes.pop(pid)
                 pid, status = os.wait()
+
         except ChildProcessError:
-
-            r = open("output.txt", "r")
-            message = r.readline()
-            while message:
-                theCount += int(message)
-                message = r.readline()
-
-            r.close()
+            pass
 
     return theCount
 
 
 
+
+
 signal.signal(signal.SIGINT, signal_handler)
-c = list_find('/Users/primus', count, True)
+c = list_find('/Users/primus', count)
 #
-ws.close()
+
 print(c)
