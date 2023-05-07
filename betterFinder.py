@@ -47,9 +47,10 @@ class LinkedList:
 w = open("output.txt", 'w')
 w.close()
 
+ws = open("result.txt", "w")
+
 def list_find(thePath, c, shouldFork=False):
 
-    global ass
     theCount = c
     amount = 0
     lst = LinkedList()
@@ -58,21 +59,25 @@ def list_find(thePath, c, shouldFork=False):
     prev = ""
     while lst.head and lst.tail:
         try:
-            path = lst.poping()
-            if prev == path:
+            paths = lst.poping()
+            if prev == paths:
 
                 # print(path)
                 pass
             else:
-                prev = path
+                prev = paths
 
-            for entry in os.scandir(path):
+            obj = os.scandir(paths)
+            for entry in obj:
                 if entry.is_file():
-                    print(entry.path)
+                    if "/Users/primus/.DS_Store" in  str(entry.path):
+                        print("here")
+                    ws.write(entry.path)
+                    ws.write("\n")
                     theCount += 1
 
 
-                if entry.is_dir() and not os.path.islink(entry.path):
+                elif entry.is_dir() and not os.path.islink(entry.path):
                     if amount < 4 and shouldFork:
                         amount += 1
                         pid = os.fork()
@@ -80,6 +85,7 @@ def list_find(thePath, c, shouldFork=False):
 
                         if pid == 0:
                             lst = None
+                            obj.close()
                             files = list_find(entry.path, 0, False)
                             w = open("output.txt", 'a')
                             w.write(str(files))
@@ -97,7 +103,7 @@ def list_find(thePath, c, shouldFork=False):
                             pass
                         node1 = Node(entry.path)
                         lst.add(node1)
-
+            obj.close()
 
         except PermissionError as e:
             pass
@@ -124,4 +130,5 @@ def list_find(thePath, c, shouldFork=False):
 signal.signal(signal.SIGINT, signal_handler)
 c = list_find('/Users/primus', count, True)
 #
+ws.close()
 print(c)
